@@ -1,3 +1,4 @@
+
 /**
  * 
  */
@@ -10,7 +11,6 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-
 /**
  * @author Tobin Rosenau
  *
@@ -21,44 +21,40 @@ public class Server {
 	 * @param args
 	 */
 	static ServerSocket anschluss;
-	public static void main(String[] args) throws IOException{		
+
+	public static void main(String[] args) throws IOException {
 		// Start ServerSocket on port 6000
 		try {
-		 anschluss = new ServerSocket(6000);
-		}catch(BindException e) {
+			anschluss = new ServerSocket(6000);
+		} catch (BindException e) {
 			e.printStackTrace();
 		}
-		//Closes the Server when the Program is closed;
-		  Runtime.getRuntime().addShutdownHook(new Thread()
-			{
-			    @Override
-			    public void run()
-			    {
-			        try {
-						anschluss.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-			    }
-			});
-		//Starts an endless loop for listening for Client Input
-		  while (true) {
-		// Start listening
-		    Socket lauschen=anschluss.accept();
-		// Print Welcome Message
-		    System.out.println("Ich lausche.");
-		// Read the Client Input
-		    InputStreamReader PortLeser=new
-		    InputStreamReader(lauschen.getInputStream());
-		    BufferedReader Eingabe= new BufferedReader(PortLeser);
-		    String S=Eingabe.readLine();
-	   // Print the Input of the Client
-		    PrintWriter Ausgabe= new PrintWriter(lauschen.getOutputStream(),true);
-		    Ausgabe.println("Ebenfalls " + S);
-		    Ausgabe.close();
-		  }
+		// Closes the Server when the Program is closed;
+		Runtime.getRuntime().addShutdownHook(new Thread() {
+			@Override
+			public void run() {
+				try {
+					anschluss.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		// Starts an endless loop for listening for Client Input
+		while (true) {
+			// Start listening
+			Socket lauschen = anschluss.accept();
+			// Print Welcome Message
+			System.out.println("Ich lausche.");
+			// Read the Client Input
+			InputStreamReader PortLeser = new InputStreamReader(lauschen.getInputStream());
+			BufferedReader Eingabe = new BufferedReader(PortLeser);
+			String S = Eingabe.readLine();
+			// Print the Input of the Client
+			PrintWriter Ausgabe = new PrintWriter(lauschen.getOutputStream(), true);
+			Ausgabe.println("Ebenfalls " + S);
+			Ausgabe.close();
 		}
 	}
-
-
+}
