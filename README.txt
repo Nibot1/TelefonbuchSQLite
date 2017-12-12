@@ -1,1 +1,1 @@
-Dieses Projekt ist ein Schulprojkekt und Enthält einen Server der ein Telefonbuch Hosted und einen Client der dem Server befehle gibt.
+Dieses Projekt ist ein Schulprojkekt und Enthält einen Server der ein Telefonbuch Hostet und einen Client der dem Server befehle gibt.
