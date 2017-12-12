@@ -15,16 +15,16 @@ import java.net.Socket;
  * @author Tobin Rosenau
  *
  */
-public class Main {
+public class Server {
 
 	/**
 	 * @param args
 	 */
 	static ServerSocket anschluss;
 	public static void main(String[] args) throws IOException{		
-		// Start ServerSocket on port 6001
+		// Start ServerSocket on port 6000
 		try {
-		 anschluss = new ServerSocket(6001);
+		 anschluss = new ServerSocket(6000);
 		}catch(BindException e) {
 			e.printStackTrace();
 		}
@@ -59,17 +59,6 @@ public class Main {
 		    Ausgabe.close();
 		  }
 		}
-
-	
-	//Closes Server
-	public void closeServer() {
-		try {
-			anschluss.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	}
 
 
