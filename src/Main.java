@@ -1,7 +1,6 @@
 /**
  * 
  */
-package Server;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,14 +15,14 @@ import java.net.Socket;
  * @author Tobin Rosenau
  *
  */
-public class Server {
+public class Main {
 
 	/**
 	 * @param args
 	 */
 	static ServerSocket anschluss;
 	public static void main(String[] args) throws IOException{		
-		// Start ServerSocket on port 6000
+		// Start ServerSocket on port 6001
 		try {
 		 anschluss = new ServerSocket(6001);
 		}catch(BindException e) {
