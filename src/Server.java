@@ -1,8 +1,4 @@
 
-/**
- * 
- */
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -25,7 +21,7 @@ public class Server {
 	public static void main(String[] args) throws IOException {
 		// Start ServerSocket on port 6000
 		try {
-			anschluss = new ServerSocket(6000);
+			anschluss = new ServerSocket(6002);
 		} catch (BindException e) {
 			e.printStackTrace();
 		}
