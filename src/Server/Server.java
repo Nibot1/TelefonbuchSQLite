@@ -22,13 +22,27 @@ public class Server {
 	 * @param args
 	 */
 	static ServerSocket anschluss;
-	public static void main(String[] args) throws IOException{
+	public static void main(String[] args) throws IOException{		
 		// Start ServerSocket on port 6000
 		try {
-		 anschluss = new ServerSocket(6000);
+		 anschluss = new ServerSocket(6001);
 		}catch(BindException e) {
 			e.printStackTrace();
 		}
+		//Closes the Server when the Program is closed;
+		  Runtime.getRuntime().addShutdownHook(new Thread()
+			{
+			    @Override
+			    public void run()
+			    {
+			        try {
+						anschluss.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			    }
+			});
 		//Starts an endless loop for listening for Client Input
 		  while (true) {
 		// Start listening
@@ -46,6 +60,7 @@ public class Server {
 		    Ausgabe.close();
 		  }
 		}
+
 	
 	//Closes Server
 	public void closeServer() {
@@ -55,6 +70,7 @@ public class Server {
 			e.printStackTrace();
 		}
 	}
+	
 	}
 
 
