@@ -1,13 +1,12 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.sql.*;
 
-/**
- * @author Tobin Rosenau
- *
- */
 public class Database {
-	public Database() {
+
+	public Database() throws FileNotFoundException, UnsupportedEncodingException {
 		File db = new File("telefonbuch.db");
 		if (!db.exists()) {
 			try {
@@ -19,45 +18,50 @@ public class Database {
 		}
 	}
 
-	public String createTable() {
+	public void createTable() {
 		Connection c = null;
 		Statement stmt = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
-			System.out.println("Opened database successfully");
+			System.out.println("Datenbank erfolgreich geöffnet");
 
 			stmt = c.createStatement();
-			String sql = "CREATE TABLE `Telefonbuch` (" + "	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
-					+ "	`Vorname`	TEXT," + "	`Nachname`	TEXT," + "	`Stra�e`	TEXT," + "	`Hausnummer`	TEXT,"
-					+ "	`Postleitzahl`	TEXT," + "	`Ort`	INTEGER," + "	`Telefonnummer`	TEXT,"
-					+ "	`Faxnummer`	TEXT," + "	`Handynummer`	TEXT" + "   `Emailadresse` TEXT" + ");";
+			String sql = "CREATE TABLE Telefonbuch (" + "	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
+					+ "	`Vorname`	TEXT," + "	`Nachname`	TEXT," + "	`Straße`	TEXT," + "	`Hausnummer`	TEXT,"
+					+ "	`Postleitzahl`	TEXT," + "	`Ort`	TEXT," + "	`Telefonnummer`	TEXT," + "	`Faxnummer`	TEXT,"
+					+ "	`Handynummer`	TEXT," + "   `Emailadresse` TEXT" + ");";
 			stmt.executeUpdate(sql);
 			stmt.close();
 			c.close();
 		} catch (Exception e) {
-			//System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			return "Operation failed";
-			//System.exit(0);
+			System.out.println("Datenbank erstellen Fehlgeschlagen");
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 		}
-		//System.out.println("Operation done successfully");
-		return "Operation done successfully";
+		System.out.println("Datenbank erfolgreich erstellt");
 	}
 
-	public String readTabe() {
+	public String readTable() {
 		Connection c = null;
 		Statement stmt = null;
 		StringBuilder sb = new StringBuilder();
 		try {
+			//Connect to the Database
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
+			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
 			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
-
+			System.out.println("Datenbank erfolgreich geöffnet");
 			stmt = c.createStatement();
+			//Read the complete Database
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Telefonbuch;");
-
+			//Create an JSONmultidimensionalArray Formatted StringBuilder
+			sb.append("[");
+			int i = 0;
 			while (rs.next()) {
+				if(i == 1) {
+					sb.append(",");
+					}
+					i++;
 				int id = rs.getInt("id");
 				String vorname = rs.getString("Vorname");
 				String nachname = rs.getString("Nachname");
@@ -68,37 +72,40 @@ public class Database {
 				String telefonnummer = rs.getString("Telefonnummer");
 				String faxnummer = rs.getString("Faxnummer");
 				String handynummer = rs.getString("handynummer");
-				String email = rs.getString("Emailaddresse");
+				String email = rs.getString("Emailadresse");
 
-				sb.append("ID: " + id);
-				sb.append("\n");
-				sb.append("Vorname: " + vorname);
-				sb.append("\n");
-				sb.append("Nachname: " + nachname);
-				sb.append("\n");
-				sb.append("Starße, Hausnummer: " + straße + ", " + hausnummer);
-				sb.append("\n");
-				sb.append("Plz, Ort: " + postleitzahl + ", " + ort);
-				sb.append("\n");
-				sb.append("Telefonnummer: " + telefonnummer);
-				sb.append("\n");
-				sb.append("Faxnummer: " + faxnummer);
-				sb.append("\n");
-				sb.append("Handynummer: " + handynummer);
-				sb.append("\n");
-				sb.append("Emailadresse: " + email);
-				sb.append("\n");
+				sb.append("{\"id\": \"" + id + "\",");
 
+				sb.append("\"Vorname\": \"" + vorname + "\",");
+
+				sb.append("\"Nachname\": \"" + nachname + "\",");
+
+				sb.append("\"Straße\": \"" + straße + "\",");
+
+				sb.append("\"Hausnummer\":\"" + hausnummer + "\",");
+
+				sb.append("\"Plz\": \"" + postleitzahl + "\",");
+				
+				sb.append("\"Ort\": \"" + ort + "\",");
+
+				sb.append("\"Telefonnummer\": \"" + telefonnummer + "\",");
+
+				sb.append("\"Faxnummer\": \"" + faxnummer + "\",");
+
+				sb.append("\"Handynummer\": \"" + handynummer + "\",");
+
+				sb.append("\"Emailadresse\": \"" + email + "\"}");
 			}
+			sb.append("]");
+			//Disconnect form the Database
 			rs.close();
 			stmt.close();
 			c.close();
 		} catch (Exception e) {
-			//System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			return "Operation failed";
-			//System.exit(0);
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return "Aktion Fehlgeschlagen";
 		}
-		//System.out.println("Operation done successfully");
+		//Return the JsonString
 		return sb.toString();
 	}
 
@@ -107,43 +114,55 @@ public class Database {
 		Statement stmt = null;
 
 		try {
+			//Connect to the Database
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
+			c = DriverManager.getConnection("jdbc:sqlite:telefobuch.db");
 			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
-
+			System.out.println("Datenbank erfolgreich geöffnet");
+			//Run Delete Command
 			stmt = c.createStatement();
 			String sql = "DELETE from COMPANY where ID=" + id + ";";
 			stmt.executeUpdate(sql);
 			c.commit();
-
-			ResultSet rs = stmt.executeQuery("SELECT * FROM COMPANY;");
-			rs.close();
+			//Disconnect from the Database
 			stmt.close();
 			c.close();
 		} catch (Exception e) {
-			//System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			return "Operation failed";
-			//System.exit(0);
+			//Return fail statement
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return "Aktion Fehlgeschlagen";
 		}
-		//System.out.println("Operation done successfully");
-		return "Operation done successfully";
+		//Return ok statement
+		return "Aktion erfolgreich ausgeführt";
 
 	}
-	
+
 	public String searchItem(String querry) {
 		Connection c = null;
 		Statement stmt = null;
 		StringBuilder sb = new StringBuilder();
 		try {
+			//Connect to the Database
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:test.db");
+			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
 			c.setAutoCommit(false);
-			System.out.println("Opened database successfully");
-
+			System.out.println("Datenbank erfolgreich geöffnet");
+			//Run Search command
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM Telefonbuch WHERE Vorname LIKE '%"+querry+"%' OR WHERE Nachname LIKE '%"+querry+"%' OR WHERE Stra�e LIKE '%"+querry+"%' OR WHERE Hausnummer LIKE '%"+querry+"%' OR WHERE Postleitzahl LIKE '%"+querry+"%' OR WHERE Ort LIKE '%"+querry+"%' OR WHERE Telefonnummer LIKE '%"+querry+"%' OR WHERE Faxnummer LIKE '%"+querry+"%' OR WHERE Handynummer LIKE '%"+querry+"%' OR WHERE Emailadresse LIKE '%"+querry+"%';");
+			ResultSet rs = stmt.executeQuery(
+					"SELECT * FROM Telefonbuch  WHERE Vorname LIKE '%" + querry + "%' OR  Nachname LIKE '%" + querry
+							+ "%' OR  Straße LIKE '%" + querry + "%' OR  Hausnummer LIKE '%" + querry
+							+ "%' OR  Postleitzahl LIKE '%" + querry + "%' OR  Ort LIKE '%" + querry
+							+ "%' OR  Telefonnummer LIKE '%" + querry + "%' OR  Faxnummer LIKE '%" + querry
+							+ "%' OR  Handynummer LIKE '%" + querry + "%' OR  Emailadresse LIKE '%" + querry + "%';");
+			//Create an JsonmultidimensionalArray String
+			sb.append("[");
+			int i =0;
 			while (rs.next()) {
+				if(i == 1) {
+				sb.append(",");
+				}
+				i++;
 				int id = rs.getInt("id");
 				String vorname = rs.getString("Vorname");
 				String nachname = rs.getString("Nachname");
@@ -154,37 +173,73 @@ public class Database {
 				String telefonnummer = rs.getString("Telefonnummer");
 				String faxnummer = rs.getString("Faxnummer");
 				String handynummer = rs.getString("handynummer");
-				String email = rs.getString("Emailaddresse");
+				String email = rs.getString("Emailadresse");
 
-				sb.append("ID: " + id);
-				sb.append("\n");
-				sb.append("Vorname: " + vorname);
-				sb.append("\n");
-				sb.append("Nachname: " + nachname);
-				sb.append("\n");
-				sb.append("Starße, Hausnummer: " + straße + ", " + hausnummer);
-				sb.append("\n");
-				sb.append("Plz, Ort: " + postleitzahl + ", " + ort);
-				sb.append("\n");
-				sb.append("Telefonnummer: " + telefonnummer);
-				sb.append("\n");
-				sb.append("Faxnummer: " + faxnummer);
-				sb.append("\n");
-				sb.append("Handynummer: " + handynummer);
-				sb.append("\n");
-				sb.append("Emailadresse: " + email);
-				sb.append("\n");
+				sb.append("{\"id\": \"" + id + "\",");
 
+				sb.append("\"Vorname\": \"" + vorname + "\",");
+
+				sb.append("\"Nachname\": \"" + nachname + "\",");
+
+				sb.append("\"Straße\": \"" + straße + "\",");
+
+				sb.append("\"Hausnummer\":\"" + hausnummer + "\",");
+
+				sb.append("\"Plz\": \"" + postleitzahl + "\",");
+				
+				sb.append("\"Ort\": \"" + ort + "\",");
+
+				sb.append("\"Telefonnummer\": \"" + telefonnummer + "\",");
+
+				sb.append("\"Faxnummer\": \"" + faxnummer + "\",");
+
+				sb.append("\"Handynummer\": \"" + handynummer + "\",");
+
+				sb.append("\"Emailadresse\": \"" + email + "\"}");
 			}
+			sb.append("]");
+			//Disconnect from Database
 			rs.close();
 			stmt.close();
 			c.close();
 		} catch (Exception e) {
-			//System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			return "Operation failed";
-			//System.exit(0);
+			//Return Fail statement
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return "Aktion Fehlgeschlagen";
 		}
-		//System.out.println("Operation done successfully");
+		//Return Ok statement
 		return sb.toString();
 	}
+
+	public String createKontakt(String vorname, String nachname, String strasse, String hausnummer, String plz,
+			String ort, String telefonnummer, String faxnummer, String handynummer, String email) {
+		Connection c = null;
+		Statement stmt = null;
+
+		try {
+			//Connect to the Database
+			Class.forName("org.sqlite.JDBC");
+			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
+			c.setAutoCommit(false);
+			System.out.println("Datenbank erfolgreich geöffnet");
+			//Create the Kontakt
+			stmt = c.createStatement();
+			String sql = "INSERT INTO Telefonbuch (Vorname, Nachname, Straße, Hausnummer, Postleitzahl, Ort, Telefonnummer, Faxnummer, Emailadresse) "
+					+ "VALUES ('" + vorname + "', '" + nachname + "', '" + strasse + "', '" + hausnummer + "', '" + plz
+					+ "', '" + ort + "', '" + telefonnummer + "', '" + faxnummer + "', '" + email + "');";
+			stmt.executeUpdate(sql);
+			//Disconnect from the Database
+			stmt.close();
+			c.commit();
+			c.close();
+		} catch (Exception e) {
+			//Return fail Statement
+			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			return "Fehler beim erstellen des Kontaktes";
+		}
+		//Return ok Statement
+		System.out.println("Kontakt erfolgreich erstellt");
+		return "Kontakt erfolgreich erstellt";
+	}
+
 }

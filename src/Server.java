@@ -7,21 +7,16 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-/**
- * @author Tobin Rosenau
- *
- */
+import org.json.*;
+
 public class Server {
 
-	/**
-	 * @param args
-	 */
 	static ServerSocket anschluss;
-
 	public static void main(String[] args) throws IOException {
+
 		// Start ServerSocket on port 6000
 		try {
-			anschluss = new ServerSocket(6002);
+			anschluss = new ServerSocket(6000);
 		} catch (BindException e) {
 			e.printStackTrace();
 		}
@@ -43,20 +38,58 @@ public class Server {
 			// Start listening
 			Socket lauschen = anschluss.accept();
 			// Print Welcome Message
-			System.out.println("Ich lausche. IP: " + lauschen.getInetAddress());
+			System.out.println("Ich lausche auf anfragen von: " + lauschen.getInetAddress());
 			// Read the Client Input
 			InputStreamReader PortLeser = new InputStreamReader(lauschen.getInputStream());
 			BufferedReader Eingabe = new BufferedReader(PortLeser);
 			String S = Eingabe.readLine();
-			// Print the Input of the Client
+			// Set up an PrintWriter
 			PrintWriter Ausgabe = new PrintWriter(lauschen.getOutputStream(), true);
-			if(S =="anzeigen") {
-				String dbOut = dataBase.readTabe();
-				if(dbOut == "null") {
+			//Handle Clientrequest
+			if(S.equals("2")) {
+				System.out.println("Kontakte anzeigen "+lauschen.getInetAddress()+":"+lauschen.getPort());
+				String dbOut = dataBase.readTable();
+				if(dbOut.equals("null") || dbOut.equals("")) {
 					Ausgabe.println("Dein Telefonbuch ist leer.");
 				}else {
-					Ausgabe.println(dataBase.readTabe());	
+					Ausgabe.println(dbOut);
 				}
+			}
+			if(S.equals("4")) {
+				String querry = Eingabe.readLine();
+				System.out.println("Kontakt suchen \""+querry+"\" "+lauschen.getInetAddress()+":"+lauschen.getPort());
+				String dbOut = dataBase.searchItem(querry);
+				if(dbOut.equals("null") || dbOut.equals("")) {
+					Ausgabe.println("Der eintrag wurde nicht gefunden.");
+				}else {
+					Ausgabe.println(dbOut);	
+				}
+			}
+			if(S.equals("3")) {
+				String id = Eingabe.readLine();
+				System.out.println("Kontakt löschen \""+id+"\""+lauschen.getInetAddress()+":"+lauschen.getPort());
+				try {
+				String dbOut = dataBase.deleteItem(Integer.parseInt(id));
+				Ausgabe.println(dbOut);
+				}catch(Exception e) {
+					e.printStackTrace();
+				}
+			}
+			if(S.equals("1")) {
+				System.out.println("Kontakt erstellen "+lauschen.getInetAddress());
+				String kontaktJson = Eingabe.readLine();
+				JSONObject kontakt = new JSONObject(kontaktJson);
+				String vorname = kontakt.getString("Vorname");
+				String nachname = kontakt.getString("Nachname");
+				String strasse = kontakt.getString("Strasse");
+				String hausnummer = kontakt.getString("Hausnummer");
+				String plz = kontakt.getString("Postleitzahl");
+				String ort = kontakt.getString("Ort");
+				String telefonnummer = kontakt.getString("Telefonnummer");
+				String faxnummer = kontakt.getString("Faxnummer");
+				String handynummer = kontakt.getString("Handynummer");
+				String email = kontakt.getString("Email");
+				Ausgabe.println(dataBase.createKontakt(vorname, nachname, strasse, hausnummer, plz, ort, telefonnummer, faxnummer, handynummer, email));
 			}
 			Ausgabe.close();
 		}
