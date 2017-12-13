@@ -116,12 +116,12 @@ public class Database {
 		try {
 			//Connect to the Database
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:telefobuch.db");
+			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
 			//Run Delete Command
 			stmt = c.createStatement();
-			String sql = "DELETE from COMPANY where ID=" + id + ";";
+			String sql = "DELETE from Telefonbuch where ID=" + id + ";";
 			stmt.executeUpdate(sql);
 			c.commit();
 			//Disconnect from the Database
@@ -172,7 +172,7 @@ public class Database {
 				String ort = rs.getString("Ort");
 				String telefonnummer = rs.getString("Telefonnummer");
 				String faxnummer = rs.getString("Faxnummer");
-				String handynummer = rs.getString("handynummer");
+				String handynummer = rs.getString("Handynummer");
 				String email = rs.getString("Emailadresse");
 
 				sb.append("{\"id\": \"" + id + "\",");
@@ -224,9 +224,9 @@ public class Database {
 			System.out.println("Datenbank erfolgreich geöffnet");
 			//Create the Kontakt
 			stmt = c.createStatement();
-			String sql = "INSERT INTO Telefonbuch (Vorname, Nachname, Straße, Hausnummer, Postleitzahl, Ort, Telefonnummer, Faxnummer, Emailadresse) "
+			String sql = "INSERT INTO Telefonbuch (Vorname, Nachname, Straße, Hausnummer, Postleitzahl, Ort, Telefonnummer, Faxnummer, Handynummer, Emailadresse) "
 					+ "VALUES ('" + vorname + "', '" + nachname + "', '" + strasse + "', '" + hausnummer + "', '" + plz
-					+ "', '" + ort + "', '" + telefonnummer + "', '" + faxnummer + "', '" + email + "');";
+					+ "', '" + ort + "', '" + telefonnummer + "', '" + faxnummer + "', '"+handynummer+"', '" + email + "');";
 			stmt.executeUpdate(sql);
 			//Disconnect from the Database
 			stmt.close();
