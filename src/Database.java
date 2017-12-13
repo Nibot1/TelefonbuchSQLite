@@ -28,7 +28,7 @@ public class Database {
 
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE `Telefonbuch` (" + "	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
-					+ "	`Vorname`	TEXT," + "	`Nachname`	TEXT," + "	`Straﬂe`	TEXT," + "	`Hausnummer`	TEXT,"
+					+ "	`Vorname`	TEXT," + "	`Nachname`	TEXT," + "	`StraÔøΩe`	TEXT," + "	`Hausnummer`	TEXT,"
 					+ "	`Postleitzahl`	TEXT," + "	`Ort`	INTEGER," + "	`Telefonnummer`	TEXT,"
 					+ "	`Faxnummer`	TEXT," + "	`Handynummer`	TEXT" + "   `Emailadresse` TEXT" + ");";
 			stmt.executeUpdate(sql);
@@ -60,7 +60,7 @@ public class Database {
 				int id = rs.getInt("id");
 				String vorname = rs.getString("Vorname");
 				String nachname = rs.getString("Nachname");
-				String straﬂe = rs.getString("Straﬂe");
+				String stra√üe = rs.getString("Stra√üe");
 				String hausnummer = rs.getString("Hausnummer");
 				String postleitzahl = rs.getString("Postleitzahl");
 				String ort = rs.getString("Ort");
@@ -75,7 +75,7 @@ public class Database {
 				sb.append("\n");
 				sb.append("Nachname: " + nachname);
 				sb.append("\n");
-				sb.append("Starﬂe, Hausnummer: " + straﬂe + ", " + hausnummer);
+				sb.append("Star√üe, Hausnummer: " + stra√üe + ", " + hausnummer);
 				sb.append("\n");
 				sb.append("Plz, Ort: " + postleitzahl + ", " + ort);
 				sb.append("\n");
@@ -141,12 +141,12 @@ public class Database {
 			System.out.println("Opened database successfully");
 
 			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM Telefonbuch WHERE Vorname LIKE '%"+querry+"%' OR WHERE Nachname LIKE '%"+querry+"%' OR WHERE Straﬂe LIKE '%"+querry+"%' OR WHERE Hausnummer LIKE '%"+querry+"%' OR WHERE Postleitzahl LIKE '%"+querry+"%' OR WHERE Ort LIKE '%"+querry+"%' OR WHERE Telefonnummer LIKE '%"+querry+"%' OR WHERE Faxnummer LIKE '%"+querry+"%' OR WHERE Handynummer LIKE '%"+querry+"%' OR WHERE Emailadresse LIKE '%"+querry+"%';");
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Telefonbuch WHERE Vorname LIKE '%"+querry+"%' OR WHERE Nachname LIKE '%"+querry+"%' OR WHERE StraÔøΩe LIKE '%"+querry+"%' OR WHERE Hausnummer LIKE '%"+querry+"%' OR WHERE Postleitzahl LIKE '%"+querry+"%' OR WHERE Ort LIKE '%"+querry+"%' OR WHERE Telefonnummer LIKE '%"+querry+"%' OR WHERE Faxnummer LIKE '%"+querry+"%' OR WHERE Handynummer LIKE '%"+querry+"%' OR WHERE Emailadresse LIKE '%"+querry+"%';");
 			while (rs.next()) {
 				int id = rs.getInt("id");
 				String vorname = rs.getString("Vorname");
 				String nachname = rs.getString("Nachname");
-				String straﬂe = rs.getString("Straﬂe");
+				String stra√üe = rs.getString("Stra√üe");
 				String hausnummer = rs.getString("Hausnummer");
 				String postleitzahl = rs.getString("Postleitzahl");
 				String ort = rs.getString("Ort");
@@ -161,7 +161,7 @@ public class Database {
 				sb.append("\n");
 				sb.append("Nachname: " + nachname);
 				sb.append("\n");
-				sb.append("Starﬂe, Hausnummer: " + straﬂe + ", " + hausnummer);
+				sb.append("Star√üe, Hausnummer: " + stra√üe + ", " + hausnummer);
 				sb.append("\n");
 				sb.append("Plz, Ort: " + postleitzahl + ", " + ort);
 				sb.append("\n");

@@ -37,19 +37,27 @@ public class Server {
 				}
 			}
 		});
+		Database dataBase = new Database();
 		// Starts an endless loop for listening for Client Input
 		while (true) {
 			// Start listening
 			Socket lauschen = anschluss.accept();
 			// Print Welcome Message
-			System.out.println("Ich lausche.");
+			System.out.println("Ich lausche. IP: " + lauschen.getInetAddress());
 			// Read the Client Input
 			InputStreamReader PortLeser = new InputStreamReader(lauschen.getInputStream());
 			BufferedReader Eingabe = new BufferedReader(PortLeser);
 			String S = Eingabe.readLine();
 			// Print the Input of the Client
 			PrintWriter Ausgabe = new PrintWriter(lauschen.getOutputStream(), true);
-			Ausgabe.println("Ebenfalls " + S);
+			if(S =="anzeigen") {
+				String dbOut = dataBase.readTabe();
+				if(dbOut == "null") {
+					Ausgabe.println("Dein Telefonbuch ist leer.");
+				}else {
+					Ausgabe.println(dataBase.readTabe());	
+				}
+			}
 			Ausgabe.close();
 		}
 	}
