@@ -8,19 +8,20 @@ import java.sql.*;
  */
 public class Database {
 	public Database() {
+		File db = new File("telefonbuch.db");
+		if (!db.exists()) {
+			try {
+				db.createNewFile();
+				createTable();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	public String createTable() {
 		Connection c = null;
 		Statement stmt = null;
-		File db = new File("telefonbuch.db");
-		if (!db.exists()) {
-			try {
-				db.createNewFile();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
