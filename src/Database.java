@@ -71,7 +71,7 @@ public class Database {
 				String ort = rs.getString("Ort");
 				String telefonnummer = rs.getString("Telefonnummer");
 				String faxnummer = rs.getString("Faxnummer");
-				String handynummer = rs.getString("handynummer");
+				String handynummer = rs.getString("Handynummer");
 				String email = rs.getString("Emailadresse");
 
 				sb.append("{\"id\": \"" + id + "\",");
