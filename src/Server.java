@@ -1,5 +1,6 @@
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -7,16 +8,39 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
 import org.json.*;
 
 public class Server {
 
 	static ServerSocket anschluss;
 	public static void main(String[] args) throws IOException {
-
-		// Start ServerSocket on port 6000
+		int port = 6000;
+		String dbPath = "telefonbuch.db";
+		//Read config file
 		try {
-			anschluss = new ServerSocket(6000);
+			File file = null;
+			file = new File("config.xml");
+		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
+		        .newInstance();
+		DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+		Document document = documentBuilder.parse(file);
+		try {
+		port = Integer.parseInt(document.getElementsByTagName("port").item(0).getTextContent());
+		}catch(Exception e) {
+			System.out.println("Bitte Überprüfen sie ob in der Konfigurationsdatei eine Zahl als Port eingegeben ist.");
+		}
+		dbPath = document.getElementsByTagName("database-path").item(0).getTextContent();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	    
+		// Start ServerSocket
+		try {
+			anschluss = new ServerSocket(port);
 		} catch (BindException e) {
 			e.printStackTrace();
 		}
@@ -32,7 +56,7 @@ public class Server {
 				}
 			}
 		});
-		Database dataBase = new Database();
+		Database dataBase = new Database(dbPath);
 		// Starts an endless loop for listening for Client Input
 		while (true) {
 			// Start listening

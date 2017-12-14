@@ -5,9 +5,9 @@ import java.io.UnsupportedEncodingException;
 import java.sql.*;
 
 public class Database {
-
-	public Database() throws FileNotFoundException, UnsupportedEncodingException {
-		File db = new File("telefonbuch.db");
+	String sqlPath;
+	public Database(String dbPath) throws FileNotFoundException, UnsupportedEncodingException {
+		File db = new File(dbPath);
 		if (!db.exists()) {
 			try {
 				db.createNewFile();
@@ -16,6 +16,7 @@ public class Database {
 				e1.printStackTrace();
 			}
 		}
+		sqlPath = "jdbc:sqlite:"+dbPath;
 	}
 
 	public void createTable() {
@@ -23,7 +24,7 @@ public class Database {
 		Statement stmt = null;
 		try {
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
+			c = DriverManager.getConnection(sqlPath);
 			System.out.println("Datenbank erfolgreich geöffnet");
 
 			stmt = c.createStatement();
@@ -48,7 +49,7 @@ public class Database {
 		try {
 			//Connect to the Database
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
+			c = DriverManager.getConnection(sqlPath);
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
 			stmt = c.prepareStatement("SELECT * FROM Telefonbuch;");
@@ -116,7 +117,7 @@ public class Database {
 		try {
 			//Connect to the Database
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
+			c = DriverManager.getConnection(sqlPath);
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
 			//Run SQLInjection safe Delete Command
@@ -144,7 +145,7 @@ public class Database {
 		try {
 			//Connect to the Database
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
+			c = DriverManager.getConnection(sqlPath);
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
 			//Run SQLInsertion safe Search command
@@ -224,7 +225,7 @@ public class Database {
 		try {
 			//Connect to the Database
 			Class.forName("org.sqlite.JDBC");
-			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
+			c = DriverManager.getConnection(sqlPath);
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
 			//Create the Kontakt
