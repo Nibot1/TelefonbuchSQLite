@@ -43,7 +43,7 @@ public class Database {
 
 	public String readTable() {
 		Connection c = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 		StringBuilder sb = new StringBuilder();
 		try {
 			//Connect to the Database
@@ -51,9 +51,9 @@ public class Database {
 			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
-			stmt = c.createStatement();
+			stmt = c.prepareStatement("SELECT * FROM Telefonbuch;");
 			//Read the complete Database
-			ResultSet rs = stmt.executeQuery("SELECT * FROM Telefonbuch;");
+			ResultSet rs = stmt.executeQuery();
 			//Create an JSONmultidimensionalArray Formatted StringBuilder
 			sb.append("[");
 			int i = 0;
@@ -111,7 +111,7 @@ public class Database {
 
 	public String deleteItem(int id) {
 		Connection c = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 
 		try {
 			//Connect to the Database
@@ -119,10 +119,10 @@ public class Database {
 			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
-			//Run Delete Command
-			stmt = c.createStatement();
-			String sql = "DELETE from Telefonbuch where ID=" + id + ";";
-			stmt.executeUpdate(sql);
+			//Run SQLInjection safe Delete Command
+			stmt = c.prepareStatement("DELETE from Telefonbuch where ID=? ;");
+			stmt.setInt(1, id);
+			stmt.executeUpdate();
 			c.commit();
 			//Disconnect from the Database
 			stmt.close();
@@ -139,7 +139,7 @@ public class Database {
 
 	public String searchItem(String querry) {
 		Connection c = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 		StringBuilder sb = new StringBuilder();
 		try {
 			//Connect to the Database
@@ -147,15 +147,19 @@ public class Database {
 			c = DriverManager.getConnection("jdbc:sqlite:telefonbuch.db");
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
-			//Run Search command
-			stmt = c.createStatement();
-			ResultSet rs = stmt.executeQuery(
-					"SELECT * FROM Telefonbuch  WHERE Vorname LIKE '%" + querry + "%' OR  Nachname LIKE '%" + querry
-							+ "%' OR  Straße LIKE '%" + querry + "%' OR  Hausnummer LIKE '%" + querry
-							+ "%' OR  Postleitzahl LIKE '%" + querry + "%' OR  Ort LIKE '%" + querry
-							+ "%' OR  Telefonnummer LIKE '%" + querry + "%' OR  Faxnummer LIKE '%" + querry
-							+ "%' OR  Handynummer LIKE '%" + querry + "%' OR  Emailadresse LIKE '%" + querry + "%';");
-			//Create an JsonmultidimensionalArray String
+			//Run SQLInsertion safe Search command
+			stmt = c.prepareStatement("SELECT * FROM Telefonbuch  WHERE Vorname LIKE ? OR  Nachname LIKE ? OR  Straße LIKE ? OR  Hausnummer LIKE ? OR  Postleitzahl LIKE ? OR  Ort LIKE ? OR  Telefonnummer LIKE ? OR  Faxnummer LIKE ? OR  Handynummer LIKE ? OR  Emailadresse LIKE ?;");
+			stmt.setString(1, "%"+querry+"%");
+			stmt.setString(2, "%"+querry+"%");
+			stmt.setString(3, "%"+querry+"%");
+			stmt.setString(4, "%"+querry+"%");
+			stmt.setString(5, "%"+querry+"%");
+			stmt.setString(6, "%"+querry+"%");
+			stmt.setString(7, "%"+querry+"%");
+			stmt.setString(8, "%"+querry+"%");
+			stmt.setString(9, "%"+querry+"%");
+			stmt.setString(10, "%"+querry+"%");
+			ResultSet rs = stmt.executeQuery(); 
 			sb.append("[");
 			int i =0;
 			while (rs.next()) {
@@ -204,8 +208,9 @@ public class Database {
 			c.close();
 		} catch (Exception e) {
 			//Return Fail statement
+			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
-			return "Aktion Fehlgeschlagen";
+			return "[]";
 		}
 		//Return Ok statement
 		return sb.toString();
@@ -214,7 +219,7 @@ public class Database {
 	public String createKontakt(String vorname, String nachname, String strasse, String hausnummer, String plz,
 			String ort, String telefonnummer, String faxnummer, String handynummer, String email) {
 		Connection c = null;
-		Statement stmt = null;
+		PreparedStatement stmt = null;
 
 		try {
 			//Connect to the Database
@@ -223,17 +228,28 @@ public class Database {
 			c.setAutoCommit(false);
 			System.out.println("Datenbank erfolgreich geöffnet");
 			//Create the Kontakt
-			stmt = c.createStatement();
-			String sql = "INSERT INTO Telefonbuch (Vorname, Nachname, Straße, Hausnummer, Postleitzahl, Ort, Telefonnummer, Faxnummer, Handynummer, Emailadresse) "
-					+ "VALUES ('" + vorname + "', '" + nachname + "', '" + strasse + "', '" + hausnummer + "', '" + plz
-					+ "', '" + ort + "', '" + telefonnummer + "', '" + faxnummer + "', '"+handynummer+"', '" + email + "');";
-			stmt.executeUpdate(sql);
+
+			
+			stmt = c.prepareStatement("INSERT INTO Telefonbuch (Vorname, Nachname, Straße, Hausnummer, Postleitzahl, Ort, Telefonnummer, Faxnummer, Handynummer, Emailadresse) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+			stmt.setString(1, vorname);
+			stmt.setString(2, nachname);
+			stmt.setString(3, strasse);
+			stmt.setString(4, hausnummer);
+			stmt.setString(5, plz);
+			stmt.setString(6, ort);
+			stmt.setString(7, telefonnummer);
+			stmt.setString(8, faxnummer);
+			stmt.setString(9, handynummer);
+			stmt.setString(10, email);
+		
+			stmt.executeUpdate();
 			//Disconnect from the Database
 			stmt.close();
 			c.commit();
 			c.close();
 		} catch (Exception e) {
 			//Return fail Statement
+			e.printStackTrace();
 			System.err.println(e.getClass().getName() + ": " + e.getMessage());
 			return "Fehler beim erstellen des Kontaktes";
 		}
