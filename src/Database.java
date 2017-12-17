@@ -3,20 +3,23 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.sql.*;
+import java.util.logging.Logger;
 
 public class Database {
 	String sqlPath;
+	private final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	public Database(String dbPath) throws FileNotFoundException, UnsupportedEncodingException {
+		sqlPath = "jdbc:sqlite:"+dbPath;
 		File db = new File(dbPath);
 		if (!db.exists()) {
 			try {
+				LOGGER.info("Creating the Database");
 				db.createNewFile();
 				createTable();
-			} catch (IOException e1) {
-				e1.printStackTrace();
+			} catch (IOException e) {
+				LOGGER.info("Error while Creating the Databasefile. Stacktrace: "+e.getStackTrace().toString());
 			}
 		}
-		sqlPath = "jdbc:sqlite:"+dbPath;
 	}
 
 	public void createTable() {
@@ -25,7 +28,7 @@ public class Database {
 		try {
 			Class.forName("org.sqlite.JDBC");
 			c = DriverManager.getConnection(sqlPath);
-			System.out.println("Datenbank erfolgreich geöffnet");
+			//System.out.println("Datenbank erfolgreich geöffnet");
 
 			stmt = c.createStatement();
 			String sql = "CREATE TABLE Telefonbuch (" + "	`id`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,"
@@ -37,7 +40,7 @@ public class Database {
 			c.close();
 		} catch (Exception e) {
 			System.out.println("Datenbank erstellen Fehlgeschlagen");
-			System.err.println(e.getClass().getName() + ": " + e.getMessage());
+			
 		}
 		System.out.println("Datenbank erfolgreich erstellt");
 	}
