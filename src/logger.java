@@ -23,6 +23,7 @@ public class logger {
         Logger rootLogger = Logger.getLogger("");
         Handler[] handlers = rootLogger.getHandlers();
         if (handlers[0] instanceof ConsoleHandler) {
+        	//Uncomment the Following line if You don't want the Log Output on the Console
             //rootLogger.removeHandler(handlers[0]);
         }
 

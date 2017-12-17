@@ -38,7 +38,6 @@ public class Server {
 				port = Integer.parseInt(document.getElementsByTagName("port").item(0).getTextContent());
 			} catch (Exception e) {
 				LOGGER.warning("Error while Reading the Port from the Configfile. Please make shure that the Configfile contains a Port-Tag with a valid Integer value");
-				System.out.println("Bitte Überprüfen sie ob in der Konfigurationsdatei eine Zahl als Port eingegeben ist.");
 			}
 			try {
 				LOGGER.info("Reading the Database Path form the Configfile");
@@ -50,7 +49,6 @@ public class Server {
 				LOGGER.info("No Configfile found");
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 			LOGGER.warning("Error While try to Read the Configfile. Stacktrace: "+e.getStackTrace().toString());
 		}
 		// Start ServerSocket
@@ -58,9 +56,8 @@ public class Server {
 			LOGGER.info("Starting the Serversocket at port: "+String.valueOf(port));
 			anschluss = new ServerSocket(port);
 		} catch (BindException e) {
-			e.printStackTrace();
 			LOGGER.warning("Error while Starting the ServerSocket. Plase make shure that no other programm use Port: "+String.valueOf(port));
-			System.exit(0);
+			System.exit(1);
 		}
 		// Closes the Server when the Program is closed;
 		Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -71,7 +68,6 @@ public class Server {
 					anschluss.close();
 				} catch (IOException e) {
 					LOGGER.warning("Error while Shuttingdown the Server. Stacktrace: "+e.getStackTrace().toString());
-					e.printStackTrace();
 				}
 			}
 		});
