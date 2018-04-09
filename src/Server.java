@@ -153,6 +153,9 @@ public class Server {
 					Ausgabe.println(dbOut);
 				}
 				break;
+			default:
+				LOGGER.warning("This should not happen. default switch handler line 157 src/Server.java "+S);
+				break;
 			}
 			Ausgabe.close();
 		}
